@@ -1,3 +1,209 @@
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+// Define necessary macros
+#define VERSION 1
+#define SUB_VERSION 1
+
+// Define necessary classes and methods
+@interface GameEntity : NSObject
+@property (nonatomic, assign) BOOL isValid;
+@property (nonatomic, assign) int entityType;
+@end
+
+@interface WorldSettings : NSObject
+@property (nonatomic, assign) BOOL isValid;
+@property (nonatomic, assign) float globalGravityZ;
+@property (nonatomic, assign) float worldToMeters;
+@end
+
+@implementation GameEntity
+// Implement properties and methods for GameEntity
+@end
+
+@implementation WorldSettings
+// Implement properties and methods for WorldSettings
+@end
+
+WorldSettings *worldSettings;
+GameEntity *localPlayer;
+NSMutableArray<GameEntity *> *entityList;
+NSMutableArray<NSString *> *unknownEntity;
+BOOL mouseDisabled = NO;
+BOOL aiming = NO;
+GameEntity *targetCharacter;
+uint64_t readThreadDelay;
+uint64_t drawThreadDelay;
+static float valuesRead[200] = {};
+static int valuesReadOffset = 0;
+static float valuesDraw[200] = {};
+static int valuesDrawOffset = 0;
+
+void print(NSString *value) {
+    NSLog(@"%@", value);
+}
+
+void update() {
+    @autoreleasepool {
+        while (true) {
+            uint64_t start = [[NSDate date] timeIntervalSince1970] * 1000;
+            NSMutableArray<GameEntity *> *tmp_entityList = [NSMutableArray array];
+            NSMutableArray<NSString *> *tmp_unknownEntity = [NSMutableArray array];
+            
+            // Replace with actual read and game logic
+            // Example:
+            // auto uWorld = read<DWORD_PTR>(baseId + offsets::gWorld);
+            // auto gameState = read<DWORD_PTR>(uWorld + offsets::wGameState);
+            // ...
+            
+            entityList = tmp_entityList;
+            unknownEntity = tmp_unknownEntity;
+            readThreadDelay = [[NSDate date] timeIntervalSince1970] * 1000 - start;
+            valuesRead[valuesReadOffset] = readThreadDelay;
+            valuesReadOffset = (valuesReadOffset + 1) % 200;
+            
+            // Replace input handling with iOS equivalent
+            // Example:
+            // if (Overlay::show && !mouseDisabled){
+            //     input::holdKey(0x4F);
+            //     mouseDisabled = true;
+            // } else if(!Overlay::show && mouseDisabled){
+            //     input::holdKey(0x4F);
+            //     mouseDisabled = false;
+            // }
+        }
+    }
+}
+
+void aimFunction(float fov, float smooth) {
+    // Implement the aim logic here
+    CGPoint screenCenter = CGPointMake([UIScreen mainScreen].bounds.size.width / 2.0, [UIScreen mainScreen].bounds.size.height / 2.0);
+    float lastDistanceFromCrossHair = FLT_MAX;
+    if (!aiming || !targetCharacter.isValid) {
+        for (GameEntity *e in entityList) {
+            if (e.entityType == 1) { // CHARACTER
+                // if (Character::isLocalPlayer(localPlayer, e))
+                //     continue;
+                // if (Character::isTeamWith(localPlayer, e))
+                //     continue;
+                // auto characterHeadPosition = Character::getWorldHeadPosition(e, 5);
+                // auto characterHeadPositionOnScreen = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
+                // auto distanceToCrosshair = screenCenter.distance2D(characterHeadPositionOnScreen);
+                // if (distanceToCrosshair < lastDistanceFromCrossHair && distanceToCrosshair < fov) {
+                //     targetCharacter = e;
+                //     lastDistanceFromCrossHair = distanceToCrosshair;
+                // }
+            }
+        }
+    }
+    if (targetCharacter.isValid) {
+        // if (Character::isLocalPlayer(localPlayer, targetCharacter))
+        //     return;
+        // if (Character::isDead(targetCharacter))
+        //     return;
+        // auto aimPosition = Character::predictAimPosition(localPlayer, targetCharacter, worldSettings.globalGravityZ, worldSettings.worldToMeters);
+        // auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
+        // if (input::getAsyncKeyState(VK_SHIFT)) {
+        //     aiming = true;
+        //     float center_x = screenCenter.x;
+        //     float center_y = screenCenter.y;
+        //     float target_x = 0.f;
+        //     float target_y = 0.f;
+        //     if (aipPositionOnScreen.x != 0.f) {
+        //         if (aipPositionOnScreen.x > center_x) {
+        //             target_x = -(center_x - aipPositionOnScreen.x);
+        //             if (smooth != 0)
+        //                 target_x /= smooth;
+        //             if (target_x + center_x > center_x * 2.f) target_x = 0.f;
+        //         }
+        //         if (aipPositionOnScreen.x < center_x) {
+        //             target_x = aipPositionOnScreen.x - center_x;
+        //             if (smooth != 0)
+        //                 target_x /= smooth;
+        //             if (target_x + center_x < 0.f) target_x = 0.f;
+        //         }
+        //     }
+        //     if (aipPositionOnScreen.y != 0.f) {
+        //         if (aipPositionOnScreen.y > center_y) {
+        //             target_y = -(center_y - aipPositionOnScreen.y);
+        //             if (smooth != 0)
+        //                 target_y /= smooth;
+        //             if (target_y + center_y > center_y * 2.f) target_y = 0.f;
+        //         }
+        //         if (aipPositionOnScreen.y < center_y) {
+        //             target_y = aipPositionOnScreen.y - center_y;
+        //             if (smooth != 0)
+        //                 target_y /= smooth;
+        //             if (target_y + center_y < 0.f) target_y = 0.f;
+        //         }
+        //     }
+        //     input::moveMouseDxDy(target_x, target_y);
+        // } else {
+        //     aiming = false;
+        // }
+    }
+}
+
+void render() {
+    // Implement the rendering logic here
+    float start = CFAbsoluteTimeGetCurrent();
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    CGPoint screenCenter = CGPointMake(screenSize.width / 2.0, screenSize.height / 2.0);
+    
+    if (config::aimbot::enable)
+        aimFunction(config::aimbot::fov, config::aimbot::smoothing);
+    
+    for (GameEntity *e in entityList) {
+        if (e.entityType == 1) { // CHARACTER
+            // if (Character::isLocalPlayer(localPlayer, e)) {
+            //     continue;
+            // }
+            // if (Character::isTeamWith(localPlayer, e))
+            //     continue;
+            // if (Character::isDead(e))
+            //     continue;
+            // auto characterPosition = Character::getWorldPosition(e);
+            // auto characterHeadPosition = Character::getWorldHeadPosition(e, 20);
+            // auto characterOnScreenBottom = Character::projectToScreen(localPlayer, characterPosition, screenSize);
+            // auto characterOnScreenTop = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
+            // auto characterDistance = Character::getWorldPosition(localPlayer).distance(characterHeadPosition) / worldSettings.worldToMeters;
+            // auto characterHeight = characterOnScreenBottom.y - characterOnScreenTop.y;
+            // auto characterWidth = characterHeight * 0.5f;
+            // auto aimPosition = Character::predictAimPosition(localPlayer, e, worldSettings.globalGravityZ, worldSettings.worldToMeters);
+            // auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
+            // ...
+        }
+        // Add handling for other entity types (ITEM, ITEM_BOX, DEATH_BOX, VEHICLE) similarly
+    }
+    
+    drawThreadDelay = (CFAbsoluteTimeGetCurrent() - start) * 1000;
+    NSString *diagnosticText = [NSString stringWithFormat:@"Read/Render - [%llu ms / %llu ms]", readThreadDelay, drawThreadDelay];
+    // Implement drawing of diagnosticText and other UI elements here
+}
+
+%hook SpringBoard
+- (void)applicationDidFinishLaunching:(id)application {
+    %orig;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        update();
+    });
+}
+%end
+
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        print(@"[~] Initializing...");
+        
+        // Perform necessary initialization here
+        
+        [NSThread sleepForTimeInterval:10];
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
+
+
+//original code
+//
 #include <iostream>
 #include <windows.h>
 #include <string>
