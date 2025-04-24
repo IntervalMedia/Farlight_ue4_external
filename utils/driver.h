@@ -1,3 +1,13 @@
+
+
+class MemoryManager {
+public:
+    bool read_virtual_memory(vm_address_t address, void* buffer, size_t size);
+    bool write_virtual_memory(vm_address_t address, const void* buffer, size_t size);
+    uintptr_t find_image_base(const char* imageName);
+};
+
+
 //
 // Created by LineR on 15.01.2024.
 //
