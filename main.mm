@@ -184,8 +184,11 @@ void render() {
 %hook SpringBoard
 - (void)applicationDidFinishLaunching:(id)application {
     %orig;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        update();
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, if (allocateGame()) {
+            
+                
+
+update();
     });
 }
 %end
@@ -195,7 +198,16 @@ int main(int argc, char *argv[]) {
         print(@"[~] Initializing...");
         
         // Perform necessary initialization here
-        
+        setupOverlay();
+
+        directInit();
+
+                CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(update), nullptr, 0, nullptr);
+                while (driver::find_process("SolarlandClient-Win64-Shipping.exe") != -1) {
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(16));
+                }
+						}
         [NSThread sleepForTimeInterval:10];
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
@@ -690,88 +702,14 @@ void renderMenu() {
             ImGui::Text("This cheat was made for fun. If you got pay for them - you got scammed!\nDeveloper: LineR");
             ImGui::EndTabItem();
         }
-        ImGui::EndTabBar();
-    }
+        ImGui::setupOverlay();
 
-
-    //std::vector<const char *> items;
-    //items.reserve(unknownEntity.size());
-    //for (const auto &item: unknownEntity) {
-    //    items.push_back(item.c_str());
-    //}
-    //ImGui::PushItemWidth(-1);
-    //ImGui::ListBox("Undefined entities", &selectedItem, items.data(), static_cast<int>(items.size()));
-    //if (ImGui::Button("Copy", ImVec2(100, 62))) {
-    //    toClipboard(GetDesktopWindow(), unknownEntity.at(selectedItem));
-    //}
-
-}
-
-int main() {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
-    print("[~] Loading vulnerable driver...");
-    system("kdmapper.exe driver.sys >nul 2>nul");
-    print("[~] Locating driver...");
-    if (driver::find_driver()) {
-        processId = driver::find_process("SolarlandClient-Win64-Shipping.exe");
-        if (processId != -1) {
-            baseId = driver::find_image();
-            print("[+] Process id: " + std::to_string(processId));
-            print("[+] Base id: " + std::to_string(baseId));
-            print("[~] Searching game window...");
-            if (allocateGame()) {
-                print("[~] Creating overlay...");
-                setupOverlay();
-                print("[~] Direct init...");
                 directInit();
-                print("[+] Attach success!");
+
                 CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(update), nullptr, 0, nullptr);
                 while (driver::find_process("SolarlandClient-Win64-Shipping.exe") != -1) {
-                    overlayLoop();
+
                     std::this_thread::sleep_for(std::chrono::milliseconds(16));
                 }
-                print("[+] Game was closed, stopping!");
-            } else {
-                print("[-] Game not found!");
-            }
-        } else {
-            print("[-] Game not found!");
-            print("[~] Cleaning EAC");
-            wchar_t *appdataRoaming;
-            if (SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE, nullptr, &appdataRoaming) != S_OK) {
-                print("[-] Failed to found path");
-            } else {
-                auto appDataPath = strings::toString(appdataRoaming);
-                auto eacFolder = appDataPath + "\\EasyAntiCheat";
-                auto gmeFolder = appDataPath + "\\GMEGLOBAL";
-                if (directory_delete(eacFolder.c_str())) {
-                    print("[+] Deleted: " + eacFolder);
-                } else {
-                    print("[-] Failed to delete: " + eacFolder);
-                }
-                if (directory_delete(gmeFolder.c_str())) {
-                    print("[+] Deleted: " + gmeFolder);
-                } else {
-                    print("[-] Failed to delete: " + gmeFolder);
-                }
-            }
-            wchar_t *appdataLocal;
-            if (SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, nullptr, &appdataLocal) != S_OK) {
-                print("[-] Failed to found path");
-            } else {
-                auto appDataPath = strings::toString(appdataLocal);
-                auto solarFolder = appDataPath + "\\Solarland";
-                if (directory_delete(solarFolder.c_str())) {
-                    print("[+] Deleted: " + solarFolder);
-                } else {
-                    print("[-] Failed to delete: " + solarFolder);
-                }
-            }
-        }
-    } else {
-        print("[-] Driver not found!");
-    }
-    Sleep(10000);
-    return 0;
-}
+						}
+
