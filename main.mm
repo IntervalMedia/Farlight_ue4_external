@@ -82,65 +82,72 @@ void aimFunction(float fov, float smooth) {
     if (!aiming || !targetCharacter.isValid) {
         for (GameEntity *e in entityList) {
             if (e.entityType == 1) { // CHARACTER
-                // if (Character::isLocalPlayer(localPlayer, e))
-                //     continue;
-                // if (Character::isTeamWith(localPlayer, e))
-                //     continue;
-                // auto characterHeadPosition = Character::getWorldHeadPosition(e, 5);
-                // auto characterHeadPositionOnScreen = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
-                // auto distanceToCrosshair = screenCenter.distance2D(characterHeadPositionOnScreen);
-                // if (distanceToCrosshair < lastDistanceFromCrossHair && distanceToCrosshair < fov) {
-                //     targetCharacter = e;
-                //     lastDistanceFromCrossHair = distanceToCrosshair;
-                // }
+		    // get target character using the closest player to screen center
+                if (Character::isLocalPlayer(localPlayer, e))
+                    continue;
+                if (Character::isTeamWith(localPlayer, e))
+                    continue;
+                auto characterHeadPosition = Character::getWorldHeadPosition(e, 5);
+                auto characterHeadPositionOnScreen = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
+                auto distanceToCrosshair = screenCenter.distance2D(characterHeadPositionOnScreen);
+                if (distanceToCrosshair < lastDistanceFromCrossHair && distanceToCrosshair < fov) {
+                    targetCharacter = e;
+                    lastDistanceFromCrossHair = distanceToCrosshair;
+                }
             }
         }
     }
     if (targetCharacter.isValid) {
-        // if (Character::isLocalPlayer(localPlayer, targetCharacter))
-        //     return;
-        // if (Character::isDead(targetCharacter))
-        //     return;
-        // auto aimPosition = Character::predictAimPosition(localPlayer, targetCharacter, worldSettings.globalGravityZ, worldSettings.worldToMeters);
-        // auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
-        // if (input::getAsyncKeyState(VK_SHIFT)) {
-        //     aiming = true;
-        //     float center_x = screenCenter.x;
-        //     float center_y = screenCenter.y;
-        //     float target_x = 0.f;
-        //     float target_y = 0.f;
-        //     if (aipPositionOnScreen.x != 0.f) {
-        //         if (aipPositionOnScreen.x > center_x) {
-        //             target_x = -(center_x - aipPositionOnScreen.x);
-        //             if (smooth != 0)
-        //                 target_x /= smooth;
-        //             if (target_x + center_x > center_x * 2.f) target_x = 0.f;
-        //         }
-        //         if (aipPositionOnScreen.x < center_x) {
-        //             target_x = aipPositionOnScreen.x - center_x;
-        //             if (smooth != 0)
-        //                 target_x /= smooth;
-        //             if (target_x + center_x < 0.f) target_x = 0.f;
-        //         }
-        //     }
-        //     if (aipPositionOnScreen.y != 0.f) {
-        //         if (aipPositionOnScreen.y > center_y) {
-        //             target_y = -(center_y - aipPositionOnScreen.y);
-        //             if (smooth != 0)
-        //                 target_y /= smooth;
-        //             if (target_y + center_y > center_y * 2.f) target_y = 0.f;
-        //         }
-        //         if (aipPositionOnScreen.y < center_y) {
-        //             target_y = aipPositionOnScreen.y - center_y;
-        //             if (smooth != 0)
-        //                 target_y /= smooth;
-        //             if (target_y + center_y < 0.f) target_y = 0.f;
-        //         }
-        //     }
-        //     input::moveMouseDxDy(target_x, target_y);
-        // } else {
-        //     aiming = false;
-        // }
+        if (Character::isLocalPlayer(localPlayer, targetCharacter))
+            return;
+        if (Character::isDead(targetCharacter))
+            return;
+        auto aimPosition = Character::predictAimPosition(localPlayer, targetCharacter, worldSettings.globalGravityZ, worldSettings.worldToMeters);
+        auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
+        
+     // replace with get view rotation of enemy and set by writing to playercontroller->controlrotation
+	    
+	if (Character::localPlayerIsShooting()) {
+            aiming = true;
+            float center_x = screenCenter.x;
+            float center_y = screenCenter.y;
+            float target_x = 0.f;
+            float target_y = 0.f;
+            
+	    if (aipPositionOnScreen.x != 0.f) {
+                if (aipPositionOnScreen.x > center_x) {
+                    target_x = -(center_x - aipPositionOnScreen.x);
+                    if (smooth != 0)
+                        target_x /= smooth;
+                    if (target_x + center_x > center_x * 2.f) target_x = 0.f;
+                }
+                if (aipPositionOnScreen.x < center_x) {
+                    target_x = aipPositionOnScreen.x - center_x;
+                    if (smooth != 0)
+                        target_x /= smooth;
+                    if (target_x + center_x < 0.f) target_x = 0.f;
+                }
+            }
+            if (aipPositionOnScreen.y != 0.f) {
+                if (aipPositionOnScreen.y > center_y) {
+                    target_y = -(center_y - aipPositionOnScreen.y);
+                    if (smooth != 0)
+                        target_y /= smooth;
+                    if (target_y + center_y > center_y * 2.f) target_y = 0.f;
+                }
+                if (aipPositionOnScreen.y < center_y) {
+                    target_y = aipPositionOnScreen.y - center_y;
+                    if (smooth != 0)
+                        target_y /= smooth;
+                    if (target_y + center_y < 0.f) target_y = 0.f;
+                }
+            }
+           
+ 	// input::moveMouseDxDy(target_x, target_y)
+	
+	} else {
+            aiming = false;
+        }
     }
 }
 
@@ -155,22 +162,22 @@ void render() {
     
     for (GameEntity *e in entityList) {
         if (e.entityType == 1) { // CHARACTER
-            // if (Character::isLocalPlayer(localPlayer, e)) {
-            //     continue;
-            // }
-            // if (Character::isTeamWith(localPlayer, e))
-            //     continue;
-            // if (Character::isDead(e))
-            //     continue;
-            // auto characterPosition = Character::getWorldPosition(e);
-            // auto characterHeadPosition = Character::getWorldHeadPosition(e, 20);
-            // auto characterOnScreenBottom = Character::projectToScreen(localPlayer, characterPosition, screenSize);
-            // auto characterOnScreenTop = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
-            // auto characterDistance = Character::getWorldPosition(localPlayer).distance(characterHeadPosition) / worldSettings.worldToMeters;
-            // auto characterHeight = characterOnScreenBottom.y - characterOnScreenTop.y;
-            // auto characterWidth = characterHeight * 0.5f;
-            // auto aimPosition = Character::predictAimPosition(localPlayer, e, worldSettings.globalGravityZ, worldSettings.worldToMeters);
-            // auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
+            if (Character::isLocalPlayer(localPlayer, e)) {
+                continue;
+            }
+            if (Character::isTeamWith(localPlayer, e))
+                continue;
+            if (Character::isDead(e))
+                continue;
+            auto characterPosition = Character::getWorldPosition(e);
+            auto characterHeadPosition = Character::getWorldHeadPosition(e, 20);
+            auto characterOnScreenBottom = Character::projectToScreen(localPlayer, characterPosition, screenSize);
+            auto characterOnScreenTop = Character::projectToScreen(localPlayer, characterHeadPosition, screenSize);
+            auto characterDistance = Character::getWorldPosition(localPlayer).distance(characterHeadPosition) / worldSettings.worldToMeters;
+            auto characterHeight = characterOnScreenBottom.y - characterOnScreenTop.y;
+            auto characterWidth = characterHeight * 0.5f;
+            auto aimPosition = Character::predictAimPosition(localPlayer, e, worldSettings.globalGravityZ, worldSettings.worldToMeters);
+            auto aipPositionOnScreen = Character::projectToScreen(localPlayer, aimPosition, screenSize);
             // ...
         }
         // Add handling for other entity types (ITEM, ITEM_BOX, DEATH_BOX, VEHICLE) similarly
