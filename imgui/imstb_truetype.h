@@ -53,7 +53,7 @@
 //       Walter van Niftrik         Ryan Griege
 //       David Gow                  Peter LaValle
 //       David Given                Sergey Popov
-//       Ivan-Assen Ivanov          Giumo x. Clanjor
+//       Ivan-Assen Ivanov          Giumo X. Clanjor
 //       Anthony Pesch              Higor Euripedes
 //       Johan Duparc               Thomas Fields
 //       Hou Qiming                 Derek Vinyard
@@ -205,7 +205,7 @@
 //
 //  Baseline:
 //    You need to select a y-coordinate that is the baseline of where
-//    your text will appear. Call GetFontBoundingBox to getValue the baseline-relative
+//    your text will appear. Call GetFontBoundingBox to get the baseline-relative
 //    bounding box for all characters. SF*-y0 will be the distance in pixels
 //    that the worst-case character could extend above the baseline, so if
 //    you want the top edge of characters to appear at the top of the
@@ -327,7 +327,7 @@ void my_stbtt_print(float x, float y, char *text)
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-// Complete program (this compiles): getValue a single bitmap, print as ASCII art
+// Complete program (this compiles): get a single bitmap, print as ASCII art
 //
 #if 0
 #include <stdio.h>
@@ -371,7 +371,7 @@ int main(int argc, char **argv)
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-// Complete program: print "Hello solarland!" banner, with bugs
+// Complete program: print "Hello World!" banner, with bugs
 //
 #if 0
 char buffer[24<<20];
@@ -382,7 +382,7 @@ int main(int arg, char **argv)
    stbtt_fontinfo font;
    int i,j,ascent,baseline,ch=0;
    float scale, xpos=2; // leave a little padding in case the character extends left
-   char *text = "Heljo solarland!"; // intentionally misspelled to show 'lj' brokenness
+   char *text = "Heljo World!"; // intentionally misspelled to show 'lj' brokenness
 
    fread(buffer, 1, 1000000, fopen("c:/windows/fonts/arialbd.ttf", "rb"));
    stbtt_InitFont(&font, buffer, 0);
@@ -612,7 +612,7 @@ STBTT_DEF int  stbtt_PackFontRange(stbtt_pack_context *spc, const unsigned char 
 // font_index=0 if you don't know what that is). It creates num_chars_in_range
 // bitmaps for characters with unicode values starting at first_unicode_char_in_range
 // and increasing. Data for how to render them is stored in chardata_for_range;
-// pass these to stbtt_GetPackedQuad to getValue back renderable quads.
+// pass these to stbtt_GetPackedQuad to get back renderable quads.
 //
 // font_size is the full height of the character from ascender to descender,
 // as computed by stbtt_ScaleForPixelHeight. To use a point size as computed
@@ -656,7 +656,7 @@ STBTT_DEF void stbtt_PackSetOversampling(stbtt_pack_context *spc, unsigned int h
 STBTT_DEF void stbtt_PackSetSkipMissingCodepoints(stbtt_pack_context *spc, int skip);
 // If skip != 0, this tells stb_truetype to skip any codepoints for which
 // there is no corresponding glyph. If skip=0, which is the default, then
-// codepoints without a glyph recived the font's "missing character" glyph,
+// codepoints without a glyph received the font's "missing character" glyph,
 // typically an empty box by convention.
 
 STBTT_DEF void stbtt_GetPackedQuad(const stbtt_packedchar *chardata, int pw, int ph,  // same data as above
@@ -708,7 +708,7 @@ STBTT_DEF int stbtt_GetNumberOfFonts(const unsigned char *data);
 
 STBTT_DEF int stbtt_GetFontOffsetForIndex(const unsigned char *data, int index);
 // Each .ttf/.ttc file may have more than one font. Each font has a sequential
-// index number starting from 0. Call this function to getValue the font offset for
+// index number starting from 0. Call this function to get the font offset for
 // a given index; it returns -1 if the index is out of range. A regular .ttf
 // file will only define one font and it always be at offset 0, so it will
 // return '0' for index 0, and -1 for all other indices.
@@ -892,7 +892,7 @@ STBTT_DEF unsigned char *stbtt_GetCodepointBitmapSubpixel(const stbtt_fontinfo *
 STBTT_DEF void stbtt_MakeCodepointBitmap(const stbtt_fontinfo *info, unsigned char *output, int out_w, int out_h, int out_stride, float scale_x, float scale_y, int codepoint);
 // the same as stbtt_GetCodepointBitmap, but you pass in storage for the bitmap
 // in the form of 'output', with row spacing of 'out_stride' bytes. the bitmap
-// is clipped to out_w/out_h bytes. Call stbtt_GetCodepointBitmapBox to getValue the
+// is clipped to out_w/out_h bytes. Call stbtt_GetCodepointBitmapBox to get the
 // width and height and positioning info for it first.
 
 STBTT_DEF void stbtt_MakeCodepointBitmapSubpixel(const stbtt_fontinfo *info, unsigned char *output, int out_w, int out_h, int out_stride, float scale_x, float scale_y, float shift_x, float shift_y, int codepoint);
@@ -904,7 +904,7 @@ STBTT_DEF void stbtt_MakeCodepointBitmapSubpixelPrefilter(const stbtt_fontinfo *
 // is performed (see stbtt_PackSetOversampling)
 
 STBTT_DEF void stbtt_GetCodepointBitmapBox(const stbtt_fontinfo *font, int codepoint, float scale_x, float scale_y, int *ix0, int *iy0, int *ix1, int *iy1);
-// getValue the bbox of the bitmap centered around the glyph origin; so the
+// get the bbox of the bitmap centered around the glyph origin; so the
 // bitmap width is ix1-ix0, height is iy1-iy0, and location to place
 // the bitmap top left is (leftSideBearing*scale,iy0).
 // (Note that the bitmap uses y-increases-down, but the shape uses
@@ -1006,7 +1006,7 @@ STBTT_DEF unsigned char * stbtt_GetCodepointSDF(const stbtt_fontinfo *info, floa
 // Finding the right font...
 //
 // You should really just solve this offline, keep your own tables
-// of what font is what, and don't try to getValue it out of the .ttf file.
+// of what font is what, and don't try to get it out of the .ttf file.
 // That's because getting it out of the .ttf file is really hard, because
 // the names in the file can appear in many possible encodings, in many
 // possible languages, and e.g. if you need a case-insensitive comparison,
@@ -1018,7 +1018,7 @@ STBTT_DEF unsigned char * stbtt_GetCodepointSDF(const stbtt_fontinfo *info, floa
 //             unicode-encoded names to try to find the font you want;
 //             you can run this before calling stbtt_InitFont()
 //
-//     stbtt_GetFontNameString() lets you getValue any of the various strings
+//     stbtt_GetFontNameString() lets you get any of the various strings
 //             from the file yourself and do your own comparisons on them.
 //             You have to have called stbtt_InitFont() first.
 
@@ -2733,7 +2733,7 @@ STBTT_DEF void stbtt_GetGlyphBitmapBoxSubpixel(const stbtt_fontinfo *font, int g
       if (ix1) *ix1 = 0;
       if (iy1) *iy1 = 0;
    } else {
-      // move to integral bboxes (treating pixels as little squares, what pixels getValue touched)?
+      // move to integral bboxes (treating pixels as little squares, what pixels get touched)?
       if (ix0) *ix0 = STBTT_ifloor( x0 * scale_x + shift_x);
       if (iy0) *iy0 = STBTT_ifloor(-y1 * scale_y + shift_y);
       if (ix1) *ix1 = STBTT_iceil ( x1 * scale_x + shift_x);
@@ -3210,7 +3210,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
                // in second pixel, area covered by line segment found in first pixel
                // is always a rectangle 1 wide * the height of that line segment; this
                // is exactly what the variable 'area' stores. it also gets a contribution
-               // from the line segment within it. the THIRD pixel will getValue the first
+               // from the line segment within it. the THIRD pixel will get the first
                // pixel's rectangle contribution, the second pixel's rectangle contribution,
                // and its own contribution. the 'own contribution' is the same in every pixel except
                // the leftmost and rightmost, a trapezoid that slides down in each pixel.
@@ -3355,7 +3355,7 @@ static void stbtt__rasterize_sorted_edges(stbtt__bitmap *result, stbtt__edge *e,
                      z->ey = scan_y_top;
                   }
                }
-               STBTT_assert(z->ey >= scan_y_top); // if we getValue really unlucky a tiny bit of an edge can be out of bounds
+               STBTT_assert(z->ey >= scan_y_top); // if we get really unlucky a tiny bit of an edge can be out of bounds
                // insert at front
                z->next = active;
                active = z;
@@ -3631,7 +3631,7 @@ static stbtt__point *stbtt_FlattenCurves(stbtt_vertex *vertices, int num_verts, 
    float objspace_flatness_squared = objspace_flatness * objspace_flatness;
    int i,n=0,start=0, pass;
 
-   // count how many "moves" there are to getValue the contour count
+   // count how many "moves" there are to get the contour count
    for (i=0; i < num_verts; ++i)
       if (vertices[i].type == STBTT_vmove)
          ++n;
@@ -3736,7 +3736,7 @@ STBTT_DEF unsigned char *stbtt_GetGlyphBitmapSubpixel(const stbtt_fontinfo *info
 
    stbtt_GetGlyphBitmapBoxSubpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, &ix0,&iy0,&ix1,&iy1);
 
-   // now we getValue the size
+   // now we get the size
    gbm.w = (ix1 - ix0);
    gbm.h = (iy1 - iy0);
    gbm.pixels = NULL; // in case we error
@@ -3900,7 +3900,7 @@ typedef int stbrp_coord;
 // COMPILER WARNING ?!?!?                                                         //
 //                                                                                //
 //                                                                                //
-// if you getValue a compile warning due to these symbols being defined more than      //
+// if you get a compile warning due to these symbols being defined more than      //
 // once, move #include "stb_rect_pack.h" before #include "stb_truetype.h"         //
 //                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -5034,7 +5034,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //                        codepoint-to-glyph conversion using table fmt=12
 //                        codepoint-to-glyph conversion using table fmt=4
 //                        stbtt_GetBakedQuad with non-square texture (Zer)
-//                    updated Hello solarland! sample to use kerning and subpixel
+//                    updated Hello World! sample to use kerning and subpixel
 //                    fixed some warnings
 //   0.3  (2009-06-24) cmap fmt=12, compound shapes (MM)
 //                    userdata, malloc-from-userdata, non-zero fill (stb)
