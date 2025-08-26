@@ -1,6 +1,7 @@
 //
 // Created by LineR on 15.01.2024.
-//
+/*
+
 
 #ifndef UNTITLED_DRIVERDEFS_H
 #define UNTITLED_DRIVERDEFS_H
@@ -221,3 +222,5 @@ namespace RegistryUtils {
     }
 }
 #endif //UNTITLED_DRIVERDEFS_H
+
+*/
