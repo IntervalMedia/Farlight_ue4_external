@@ -4,7 +4,17 @@
 #include <chrono>
 // Apple-compatible matrix implementation replacing DirectX dependencies
 #include "apple_matrix.h"
-#include "unreal.h"
+
+// Conditional compilation for Apple vs Windows platforms
+#ifdef __APPLE__
+    // Apple-specific includes for iOS jailbreak tweak
+    #include "apple_compat.h"
+    // Skip Windows-specific headers and use Apple alternatives
+#else
+    // Windows-specific includes (original behavior)
+    #include "unreal.h"
+#endif
+
 #include "../cheat/solar_enum.h"
 #include "../utils/strings.h"
 #include "../utils/utils.h"
