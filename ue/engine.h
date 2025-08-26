@@ -1,9 +1,20 @@
 #include <string>
 #include <cstdint>
 #include <cmath>
-#include <d3d9.h>
-#include <DirectXMath.h>
-#include "unreal.h"
+#include <chrono>
+// Apple-compatible matrix implementation replacing DirectX dependencies
+#include "apple_matrix.h"
+
+// Conditional compilation for Apple vs Windows platforms
+#ifdef __APPLE__
+    // Apple-specific includes for iOS jailbreak tweak
+    #include "apple_compat.h"
+    // Skip Windows-specific headers and use Apple alternatives
+#else
+    // Windows-specific includes (original behavior)
+    #include "unreal.h"
+#endif
+
 #include "../cheat/solar_enum.h"
 #include "../utils/strings.h"
 #include "../utils/utils.h"
@@ -182,12 +193,19 @@ struct FTransform {
     FVector scale;
     char pad1[4];
 
+    // Apple-compatible matrix conversion method
+    // Converts FTransform (quaternion rotation + translation + scale) to 4x4 matrix
+    // This replaces DirectX-specific matrix operations with standard C++ math
     [[nodiscard]] D3DMATRIX toMatrix() const {
         D3DMATRIX m;
+        
+        // Set translation components (position)
         m._41 = translation.x;
         m._42 = translation.y;
         m._43 = translation.z;
 
+        // Convert quaternion to matrix using standard mathematical formulas
+        // These calculations are equivalent to DirectX but use Apple-compatible operations
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -195,6 +213,8 @@ struct FTransform {
         float xx2 = rotation.x * x2;
         float yy2 = rotation.y * y2;
         float zz2 = rotation.z * z2;
+        
+        // Calculate rotation matrix components with scaling applied
         m._11 = (1.0f - (yy2 + zz2)) * scale.x;
         m._22 = (1.0f - (xx2 + zz2)) * scale.y;
         m._33 = (1.0f - (xx2 + yy2)) * scale.z;
@@ -214,6 +234,7 @@ struct FTransform {
         m._31 = (xz2 + wy2) * scale.z;
         m._13 = (xz2 - wy2) * scale.x;
 
+        // Set homogeneous coordinates
         m._14 = 0.0f;
         m._24 = 0.0f;
         m._34 = 0.0f;
@@ -223,16 +244,23 @@ struct FTransform {
     }
 };
 
+// Apple-compatible matrix creation function
+// Creates a transformation matrix from rotation and translation
 D3DMATRIX matrix(FRotator rot, FVector origin) {
+    // Convert degrees to radians for Apple's math functions
     float radPitch = (rot.x * float(M_PI) / 180.f);
     float radYaw = (rot.y * float(M_PI) / 180.f);
     float radRoll = (rot.z * float(M_PI) / 180.f);
+    
+    // Calculate trigonometric values using standard C++ math
     float SP = sinf(radPitch);
     float CP = cosf(radPitch);
     float SY = sinf(radYaw);
     float CY = cosf(radYaw);
     float SR = sinf(radRoll);
     float CR = cosf(radRoll);
+    
+    // Create Apple-compatible matrix using our custom implementation
     D3DMATRIX matrix;
     matrix.m[0][0] = CP * CY;
     matrix.m[0][1] = CP * SY;
@@ -253,8 +281,13 @@ D3DMATRIX matrix(FRotator rot, FVector origin) {
     return matrix;
 }
 
+// Apple-compatible matrix multiplication function
+// Performs 4x4 matrix multiplication using standard C++ operations
 D3DMATRIX matrixMultiplication(D3DMATRIX pM1, D3DMATRIX pM2) {
     D3DMATRIX pOut;
+    
+    // Perform matrix multiplication using our Apple-compatible implementation
+    // This replaces DirectX matrix operations with standard C++ math
     pOut._11 = pM1._11 * pM2._11 + pM1._12 * pM2._21 + pM1._13 * pM2._31 + pM1._14 * pM2._41;
     pOut._12 = pM1._11 * pM2._12 + pM1._12 * pM2._22 + pM1._13 * pM2._32 + pM1._14 * pM2._42;
     pOut._13 = pM1._11 * pM2._13 + pM1._12 * pM2._23 + pM1._13 * pM2._33 + pM1._14 * pM2._43;
