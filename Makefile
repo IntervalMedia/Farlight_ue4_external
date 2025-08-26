@@ -8,7 +8,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = Farlight
 
 Farlight_FILES = main.mm \
-                 utils/driver.cpp \
+                 ue/ios_driver.mm \
                  imgui/imgui_widgets.cpp \
                  imgui/imgui_tables.cpp \
                  imgui/imgui.cpp \

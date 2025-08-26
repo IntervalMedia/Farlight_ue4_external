@@ -13,6 +13,8 @@
 #ifdef __APPLE__
     #include <mach/mach.h>
     using vm_address_t = mach_vm_address_t;
+    // Include iOS-specific driver implementation
+    #include "ios_driver.h"
 #else
     // For testing purposes on non-Apple systems
     using vm_address_t = uintptr_t;
@@ -29,6 +31,9 @@ using USHORT = uint16_t;
 using INT32 = int32_t;
 using INT16 = int16_t;
 
+#ifndef __APPLE__
+// For non-Apple systems (testing), provide mock implementations
+
 // Forward declarations for functions that would be implemented
 // in the iOS-specific memory management layer
 template<typename T>
@@ -39,6 +44,26 @@ void write(uint64_t address, T buffer);
 
 template<typename T>
 bool read_array(uint64_t address, T *array, size_t len);
+
+// Mock implementation for compilation (would be replaced by actual iOS driver)
+namespace driver {
+    static bool readBoolean(uint64_t address, uint8_t bitOffset) {
+        // This would be implemented in the iOS-specific driver
+        return false;
+    }
+    
+    static int32_t find_process(const char* processName) {
+        // This would be implemented in the iOS-specific driver
+        return -1;
+    }
+}
+
+// Minimal declarations for functions that would be implemented elsewhere
+// in the iOS-specific driver layer
+extern uintptr_t processId;
+extern uintptr_t baseId;
+
+#endif // !__APPLE__
 
 // Essential Unreal Engine data structures for Apple compatibility
 template<class T>
@@ -145,19 +170,6 @@ namespace offsets {
     extern uint32_t lOwningWorld;
     extern uint32_t lActorCluster;
     // Add other offsets as needed for iOS version...
-}
-
-// Minimal declarations for functions that would be implemented elsewhere
-// in the iOS-specific driver layer
-extern uintptr_t processId;
-extern uintptr_t baseId;
-
-// Mock implementation for compilation (would be replaced by actual iOS driver)
-namespace driver {
-    static bool readBoolean(uint64_t address, uint8_t bitOffset) {
-        // This would be implemented in the iOS-specific driver
-        return false;
-    }
 }
 
 // Function declarations that would be used by the nameFromId function
