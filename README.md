@@ -1,4 +1,6 @@
-This fork is a ported version made for Apple iOS (jailbroken)
+WIP EXPERIMENT
+
+This fork is an attempt to take a native windows dll cheat and make a ported version made for Apple iOS (jailbroken)
             - Using Theos build system to build a .deb tweak for Rootless Jailbreak (Dopamine, xinamine)
 
 #Original:
