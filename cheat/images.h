@@ -1,4 +1,5 @@
 // header
+// Images are now embedded at compile-time using compressed pixel data
 #pragma once
 #import <Metal/Metal.h>
 
@@ -35,9 +36,6 @@ namespace Icons {
         extern Texture UZI;
         extern Texture arm;
     }
-
-    // iOS replacement for D3DXCreateTextureFromFileA
-    bool loadTextureFromFile(id<MTLDevice> device, const char* bundlePathNoExt, Texture& out);
 
     // call once at startup (after you have a MTLDevice)
     bool loadIcons(id<MTLDevice> device);
